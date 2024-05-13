@@ -80,8 +80,12 @@ function SignUp() {
           {loading ? "loading...." : "SignUp"}
         </button>
       </form>
+      <div className="mt-4 gap-2">
+
+     
       <span>Have a account? </span>
-      <Link to="/sign-in">Sign In</Link>
+      <Link to="/sign-in" className="text-sky-500 ">Sign In</Link>
+      </div>
       {error && <p className="text-red-600">{error}</p>}
     </div>
   );
