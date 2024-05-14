@@ -17,9 +17,14 @@ function App() {
         <Route path="sign-in" element={<SignIn />} />
         <Route path="sign-up" element={<SignUp />} />
 
-        <Route elememt={<PrivateRoute />}>
-          <Route path="profile" elements={<Profile />} />
-        </Route>
+        <Route
+          path="profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
