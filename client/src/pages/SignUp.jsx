@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import OAuth from "../compoents/OAuth";
+import OAuth from "../components/OAuth";
 
 function SignUp() {
   const [formData, setFormData] = useState({});
@@ -80,13 +80,13 @@ function SignUp() {
         >
           {loading ? "loading...." : "SignUp"}
         </button>
-        <OAuth/>
+        <OAuth />
       </form>
       <div className="mt-4 gap-2">
-
-     
-      <span>Have a account? </span>
-      <Link to="/sign-in" className="text-sky-500 ">Sign In</Link>
+        <span>Have a account? </span>
+        <Link to="/sign-in" className="text-sky-500 ">
+          Sign In
+        </Link>
       </div>
       {error && <p className="text-red-600">{error}</p>}
     </div>
