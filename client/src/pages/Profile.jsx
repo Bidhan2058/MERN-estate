@@ -8,6 +8,13 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+
+import {
+  updateUserStart,
+  updateUserFailure,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 function Profile() {
   const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef(null);
@@ -15,6 +22,7 @@ function Profile() {
   const [filePercentage, setFilePercentage] = useState("0");
   const [fileError, setFileError] = useState(false);
   const [formData, setFormData] = useState({});
+  const dispatch = useDispatch();
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -42,13 +50,41 @@ function Profile() {
       }
     );
   };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+        credentials: "include", // Include cookies in the request
+      });
+      const data = await res.json();
+      console.log(data);
+
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+    } catch (err) {
+      dispatch(updateUserFailure(err.message));
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-serif font-semibold m-4 text-center">
         Profile
       </h1>
-      <form className="flex flex-col  gap-3 ">
+      <form onSubmit={handleSubmit} className="flex flex-col  gap-3 ">
         <input
           type="file"
           ref={fileRef}
@@ -59,7 +95,7 @@ function Profile() {
         <img
           onClick={() => fileRef.current.click()}
           className="rounded-full w-14 h-14 object-cover self-center"
-          src={formData.avatar|| currentUser.avatar}
+          src={formData.avatar || currentUser.avatar}
           alt="User Avatar"
         />
         <p className="text-sm self-center">
@@ -79,17 +115,19 @@ function Profile() {
         </p>
         <input
           type="text"
-          placeholder={currentUser.username}
+          defaultValue={currentUser.username}
           className="border rounded-lg p-2 shadow-md focus:shadow-lg focus:outline-none   "
           id="username"
           autoComplete="off"
+          onChange={handleChange}
         />
         <input
           type="text"
-          placeholder={currentUser.email}
+          defaultValue={currentUser.email}
           className="border rounded-lg p-2 shadow-md focus:shadow-lg focus:outline-none   "
           id="email"
           autoComplete="off"
+          onChange={handleChange}
         />
         <input
           type="text"
@@ -97,6 +135,7 @@ function Profile() {
           className="border rounded-lg p-2 shadow-md focus:shadow-lg focus:outline-none   "
           id="password"
           autoComplete="off"
+          onChange={handleChange}
         />
         <button
           className="p-3 bg-slate-700 text-white rounded-lg 
