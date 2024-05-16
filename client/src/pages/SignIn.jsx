@@ -53,7 +53,7 @@ function SignIn() {
           placeholder="email"
           className="border rounded-lg p-2 shadow-md focus:shadow-lg focus:outline-none "
           id="email"
-          autoComplete="off"
+          autoComplete="email"
           onChange={handleChange}
         />
         <input
@@ -75,7 +75,7 @@ function SignIn() {
         <OAuth />
       </form>
       <div className="mt-4 gap-2">
-        <span>Dont hanve a account? </span>
+        <span>Dont have a account? </span>
         <Link to="/sign-up" className="text-sky-500 ">
           Sign Up
         </Link>

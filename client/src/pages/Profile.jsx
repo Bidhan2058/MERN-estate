@@ -13,15 +13,22 @@ import {
   updateUserStart,
   updateUserFailure,
   updateUserSuccess,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  signoutUserStart,
+  signoutUserFailure,
+  signoutUserSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 function Profile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState("0");
   const [fileError, setFileError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     if (file) {
@@ -74,10 +81,41 @@ function Profile() {
         return;
       }
       dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
     } catch (err) {
       dispatch(updateUserFailure(err.message));
     }
   };
+  const handleDeleteAccount = async () => {
+    try {
+      dispatch(deleteUserStart());
+
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      console.log(error.message);
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
+  const handleSignout=async()=>{
+    try{
+      dispatch(signoutUserStart())
+      const res = await fetch('/api/auth/signout');
+      const data = await res.json();
+      if (data.success===false){
+        dispatch(signoutUserFailure(data.message));
+      }
+      dispatch(signoutUserSuccess(data));
+    }catch(err){
+dispatch(signoutUserFailure(err.message))    }
+  }
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -106,9 +144,7 @@ function Profile() {
               {`uploading ${filePercentage}%`}
             </span>
           ) : filePercentage === 100 ? (
-            <span className="text-green-600">
-              image successfully uploaded!{" "}
-            </span>
+            <span className="text-green-600">image successfully uploaded!</span>
           ) : (
             ""
           )}{" "}
@@ -138,17 +174,24 @@ function Profile() {
           onChange={handleChange}
         />
         <button
+          disabled={loading}
           className="p-3 bg-slate-700 text-white rounded-lg 
         hover:opacity-95
         disabled:opacity-50"
         >
-          Update
+          {loading ? "loading..." : "Update Profile"}
         </button>
       </form>
       <div className="text-red-600 flex justify-between ml-2 mr-2">
-        <span>Delete Account</span>
-        <span>signout</span>
+        <span onClick={handleDeleteAccount} className="cursor-pointer">
+          Delete Account
+        </span>
+        <span onClick={handleSignout} className="cursor-pointer">signout</span>
       </div>
+      {error && <p className="text-red-600">{error}</p>}
+      {updateSuccess && (
+        <p className="text-green-600">user is updated successfully !!</p>
+      )}
     </div>
   );
 }

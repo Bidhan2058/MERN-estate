@@ -1,10 +1,14 @@
-const express = require('express');
-const { test, updateUser } = require('../controller/user.controller');
-const verifyToken = require('../utils/verifyUser');
+const express = require("express");
+const {
+  test,
+  updateUser,
+  deleteUser,
+} = require("../controller/user.controller");
+const verifyToken = require("../utils/verifyUser");
 
 const router = express.Router();
 
-router.get('/user', test);
-router.post('/update/:id',verifyToken, updateUser);
-
+router.get("/user", test);
+router.post("/update/:id", verifyToken, updateUser);
+router.delete("/delete/:id", verifyToken, deleteUser);
 module.exports = router;

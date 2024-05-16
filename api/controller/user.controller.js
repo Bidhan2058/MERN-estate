@@ -7,7 +7,7 @@ const test = (req, res) => {
 };
 
 const updateUser = async (req, res, next) => {
-  if (req.user.id!==req.params.id)
+  if (req.user.id !== req.params.id)
     return next(errorHandler(401, "You can only update your own account!"));
   try {
     if (req.body.password) {
@@ -35,4 +35,17 @@ const updateUser = async (req, res, next) => {
   }
 };
 
-module.exports = { test, updateUser };
+const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    return next(errorHandler(401, "you can delete only your own account"));
+
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.clearCookie("access_token");
+    res.status(200).json("user deleted successfully!!");
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { test, updateUser, deleteUser };

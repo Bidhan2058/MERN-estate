@@ -72,4 +72,15 @@ const google = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { signup, signin, google };
+const signout = async (req, res, next) => {
+  try {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json({ message: "Signout successfull" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { signup, signin, google, signout };
