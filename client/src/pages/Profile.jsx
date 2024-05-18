@@ -8,6 +8,7 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import { Link } from "react-router-dom";
 
 import {
   updateUserStart,
@@ -104,18 +105,19 @@ function Profile() {
       dispatch(deleteUserFailure(error.message));
     }
   };
-  const handleSignout=async()=>{
-    try{
-      dispatch(signoutUserStart())
-      const res = await fetch('/api/auth/signout');
+  const handleSignout = async () => {
+    try {
+      dispatch(signoutUserStart());
+      const res = await fetch("/api/auth/signout");
       const data = await res.json();
-      if (data.success===false){
+      if (data.success === false) {
         dispatch(signoutUserFailure(data.message));
       }
       dispatch(signoutUserSuccess(data));
-    }catch(err){
-dispatch(signoutUserFailure(err.message))    }
-  }
+    } catch (err) {
+      dispatch(signoutUserFailure(err.message));
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -181,12 +183,21 @@ dispatch(signoutUserFailure(err.message))    }
         >
           {loading ? "loading..." : "Update Profile"}
         </button>
+        <Link
+          to="/create-listing"
+          className="bg-green-500 text-white rounded-lg p-3 text-center hover:opacity-90"
+        >
+          {" "}
+          Create Listing
+        </Link>
       </form>
       <div className="text-red-600 flex justify-between ml-2 mr-2">
         <span onClick={handleDeleteAccount} className="cursor-pointer">
           Delete Account
         </span>
-        <span onClick={handleSignout} className="cursor-pointer">signout</span>
+        <span onClick={handleSignout} className="cursor-pointer">
+          signout
+        </span>
       </div>
       {error && <p className="text-red-600">{error}</p>}
       {updateSuccess && (
