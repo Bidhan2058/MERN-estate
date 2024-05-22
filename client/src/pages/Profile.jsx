@@ -5,6 +5,7 @@ import { app } from "../firebase";
 import {
   getDownloadURL,
   getStorage,
+  list,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
@@ -25,11 +26,13 @@ import { useDispatch } from "react-redux";
 function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
+  const [showListingError, setShowListingError] = useState(false);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState("0");
   const [fileError, setFileError] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState([]);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [list, setList] = useState({});
   const dispatch = useDispatch();
   useEffect(() => {
     if (file) {
@@ -118,6 +121,22 @@ function Profile() {
       dispatch(signoutUserFailure(err.message));
     }
   };
+  const handleShowList = async () => {
+    try {
+      setShowListingError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setShowListingError(true);
+        return;
+      }
+      setList(data);
+    } catch (error) {
+      setShowListingError(true);
+    }
+  };
+  const handleListDelete = () => {};
+  const handleListEdit = () => {};
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -187,7 +206,6 @@ function Profile() {
           to="/create-listing"
           className="bg-green-500 text-white rounded-lg p-3 text-center hover:opacity-90"
         >
-
           Create Listing
         </Link>
       </form>
@@ -203,6 +221,62 @@ function Profile() {
       {updateSuccess && (
         <p className="text-green-600">user is updated successfully !!</p>
       )}
+
+      <button
+        onClick={handleShowList}
+        type="button"
+        className="bg-green-500 text-white rounded-lg p-3 hover:opacity-90 mt-2  w-full"
+      >
+        SHOW MY LISTINGS
+      </button>
+      <p className="text-red-500 text=sm">
+        {showListingError && "Error showing error"}
+      </p>
+      {list.length > 0 &&
+        <div>
+
+       <h1 className="font-bold text-lg text-center my-5">
+        YOUR LISTING
+       </h1>
+       { list.map((l) => (
+          <div
+            key={l._id}
+            className=" p-2 rounded-lg mt-2 gap-4 border-b-4 flex justify-evenly items-center"
+          >
+            <Link to={`/listing/${l._id}`}>
+              <img
+                src={l.imageUrls[0]}
+                alt="listing image"
+                className="h-16 w-16 object-contain"
+              />
+            </Link>
+            <Link
+              to={`/listing/${l._id}`}
+              className="font-bold text-slate-500  truncate"
+            >
+              {l.name}
+            </Link>
+            <div className="flex flex-col">
+              <button
+                type="button"
+                onClick={handleListDelete}
+                className="text-red-500 font-bold"
+              >
+                Delete
+              </button>
+              <button
+                type="button"
+                onClick={handleListEdit}
+                className="text-green-500 font-bold"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+        ))}
+        </div>
+        
+        }
     </div>
   );
 }
