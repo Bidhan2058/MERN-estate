@@ -135,7 +135,22 @@ function Profile() {
       setShowListingError(true);
     }
   };
-  const handleListDelete = () => {};
+  const handleListDelete = async (listId) => {
+    try {
+      const res = await fetch(`/api/listing/delete/${listId}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        return;
+      }
+      setList((prev) => prev.filter((listing) => listing._id !== listId));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   const handleListEdit = () => {};
 
   return (
@@ -232,51 +247,47 @@ function Profile() {
       <p className="text-red-500 text=sm">
         {showListingError && "Error showing error"}
       </p>
-      {list.length > 0 &&
+      {list.length > 0 && (
         <div>
-
-       <h1 className="font-bold text-lg text-center my-5">
-        YOUR LISTING
-       </h1>
-       { list.map((l) => (
-          <div
-            key={l._id}
-            className=" p-2 rounded-lg mt-2 gap-4 border-b-4 flex justify-evenly items-center"
-          >
-            <Link to={`/listing/${l._id}`}>
-              <img
-                src={l.imageUrls[0]}
-                alt="listing image"
-                className="h-16 w-16 object-contain"
-              />
-            </Link>
-            <Link
-              to={`/listing/${l._id}`}
-              className="font-bold text-slate-500  truncate"
+          <h1 className="font-bold text-lg text-center my-5">YOUR LISTING</h1>
+          {list.map((l) => (
+            <div
+              key={l._id}
+              className=" p-2 rounded-lg mt-2 gap-4 border-b-4 flex justify-evenly items-center"
             >
-              {l.name}
-            </Link>
-            <div className="flex flex-col">
-              <button
-                type="button"
-                onClick={handleListDelete}
-                className="text-red-500 font-bold"
+              <Link to={`/listing/${l._id}`}>
+                <img
+                  src={l.imageUrls[0]}
+                  alt="listing image"
+                  className="h-16 w-16 object-contain"
+                />
+              </Link>
+              <Link
+                to={`/listing/${l._id}`}
+                className="font-bold text-slate-500  truncate"
               >
-                Delete
-              </button>
-              <button
-                type="button"
-                onClick={handleListEdit}
-                className="text-green-500 font-bold"
-              >
-                Edit
-              </button>
+                {l.name}
+              </Link>
+              <div className="flex flex-col">
+                <button
+                  type="button"
+                  onClick={() => handleListDelete(l._id)}
+                  className="text-red-500 font-semibold"
+                >
+                  Delete
+                </button>
+                <button
+                  type="button"
+                  onClick={handleListEdit}
+                  className="text-green-500 font-semibold"
+                >
+                  Edit
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
-        
-        }
+      )}
     </div>
   );
 }

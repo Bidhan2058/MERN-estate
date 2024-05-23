@@ -1,9 +1,10 @@
 const express = require("express");
-const { createListing } = require("../controller/listing.controller");
+const { createListing, deleteListing } = require("../controller/listing.controller");
 const verifyToken = require("../utils/verifyUser");
 
 const router = express.Router();
 
 router.post("/create",verifyToken, createListing);
+router.delete('/delete/:id',verifyToken,deleteListing)
 
 module.exports = router;
