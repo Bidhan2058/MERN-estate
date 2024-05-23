@@ -151,7 +151,6 @@ function Profile() {
       console.log(error.message);
     }
   };
-  const handleListEdit = () => {};
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -276,13 +275,17 @@ function Profile() {
                 >
                   Delete
                 </button>
-                <button
-                  type="button"
-                  onClick={handleListEdit}
-                  className="text-green-500 font-semibold"
+                <Link
+                  to={`/update-listing/${l._id}
+                `}
                 >
-                  Edit
-                </button>
+                  <button
+                    type="button"
+                    className="text-green-500 font-semibold"
+                  >
+                    Edit
+                  </button>
+                </Link>
               </div>
             </div>
           ))}
