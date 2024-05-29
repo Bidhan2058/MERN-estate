@@ -1,5 +1,7 @@
 const Listing = require("../Model/listing.model");
+const User = require("../Model/user.model");
 const errorHandler = require("../utils/error");
+
 const createListing = async (req, res, next) => {
   try {
     const listing = await Listing.create(req.body);
@@ -55,4 +57,12 @@ const getListing = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { createListing, deleteListing, updateListing, getListing };
+
+
+module.exports = {
+  createListing,
+  deleteListing,
+  updateListing,
+  getListing,
+
+};

@@ -21,7 +21,7 @@ function CreateListing() {
     bedroom: 1,
     bathroom: 1,
     regularPrice: 50,
-    discoutedPrice: 0,
+    discountedPrice: 0,
     offer: false,
     parking: false,
     furnished: false,
@@ -104,7 +104,7 @@ function CreateListing() {
     ) {
       setFormData({
         ...formData,
-        [e.target.id]: true,
+        [e.target.id]: !formData[e.target.id],
       });
     }
     if (
@@ -124,7 +124,7 @@ function CreateListing() {
     try {
       if (formData.imageUrls.length < 1)
         return setError("You must upload at least one image");
-      if (+formData.regularPrice < +formData.discoutedPrice)
+      if (+formData.regularPrice < +formData.discountedPrice)
         return setError("Discount price must be lower than regular price");
       setloading(true);
       setError(false);
@@ -280,24 +280,29 @@ function CreateListing() {
               />
               <div className="flex flex-col">
                 <span>Regular Price</span>
-                <span className="text-sm items-center">($/Month)</span>
+
+                <span className="text-sm items-center">
+                  {formData.type === "rent" && "($/Month)"}
+                </span>
               </div>
             </div>
             {formData.offer && (
               <div className="flex gap-2 items-center">
                 <input
                   type="number"
-                  id="discoutedPrice"
+                  id="discountedPrice"
                   className="border p-2 border-gray-300 rounded-lg w-36"
                   min="0"
                   max="1000000o"
                   required
                   onChange={handleChange}
-                  value={formData.discoutedPrice}
+                  value={formData.discountedPrice}
                 />
                 <div className="flex flex-col items-center">
                   <span>Discount Price</span>
-                  <span className="text-sm">($/Month)</span>
+                  <span className="text-sm items-center">
+                    {formData.type === "rent" && "($/Month)"}
+                  </span>{" "}
                 </div>
               </div>
             )}

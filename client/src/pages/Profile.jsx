@@ -21,6 +21,7 @@ import {
   signoutUserStart,
   signoutUserFailure,
   signoutUserSuccess,
+  removeError,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 function Profile() {
@@ -68,6 +69,7 @@ function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      dispatch(removeError())
       dispatch(updateUserStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: "POST",
